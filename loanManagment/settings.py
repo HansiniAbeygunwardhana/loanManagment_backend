@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'loanManagment',
     'rest_framework',
-    'users'
+    'users',
 ]
 
 MIDDLEWARE = [
