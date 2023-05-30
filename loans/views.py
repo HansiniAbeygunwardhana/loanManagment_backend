@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getLoans(request):
-    loans = Loans.objects.all()
+    user = request.user
+    loans = user.loans_set.all()
     serializer = loanSerializer(loans, many=True)
     return Response(serializer.data)
