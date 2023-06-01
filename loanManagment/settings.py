@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'users',
     'loans',
     'loanValues',
+    'customers',
+    
     
     
     'rest_framework',
