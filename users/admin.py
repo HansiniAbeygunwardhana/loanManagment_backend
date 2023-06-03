@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
     
     add_fieldsets = (
         (None, {
-            'fields': ('username', 'email','password1', 'password2')}),
+            'fields': ('username', 'email','password1', 'password2', 'is_staff' ,' is_superuser')}),
         ('User Type', {'fields': ('user_type',)}),
         
     )

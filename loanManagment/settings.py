@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'loans',
     'loanValues',
     'customers',
+    'managers',
+    'staff',
     
     
     
@@ -154,7 +156,7 @@ SIMPLE_JWT = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Colombo'
 
 USE_I18N = True
 
