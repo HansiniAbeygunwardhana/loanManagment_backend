@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Loans
+from .models import Loan
 
 class loanSerializer(ModelSerializer):
     class Meta:
-        model = Loans
+        model = Loan
         fields = '__all__'

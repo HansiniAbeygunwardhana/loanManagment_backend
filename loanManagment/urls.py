@@ -19,8 +19,8 @@ from django.urls import path, include
 from loans import views
 
 urlpatterns = [
-    path('admin', admin.site.urls),
-    path('api/' , include('users.urls')),
+    path('admin/', admin.site.urls),
+    path('users/' , include('users.urls')),
     path('loans/' , include('loans.urls')),
     path('loandetails/' , include('loanValues.urls')),
     path('customers/' , include('customers.urls')),

@@ -1,10 +1,11 @@
 from django.db import models
+from users.models import User
 
 # Create your models here.
 
-class Manager (models.Model):
+class Manager (User):
     
-    branch = (
+    branchLocation = (
         ('Polonnaruwa', 'Polonnaruwa'),
         ('Hingurakgoda', 'Hingurakgoda'),
         ('Diyasenpura', 'Diyasenpura'),
@@ -13,13 +14,15 @@ class Manager (models.Model):
         ('Mahiyanganaya', 'Mahiyanganaya'),
     )
     
-    name = models.CharField(max_length=100, unique=True) 
-    address = models.CharField(max_length=100)
-    dateofbirth = models.DateField()
-    email = models.EmailField()
-    branch = models.CharField(max_length=20 , choices=branch , default='Sewanapitiya')
-    phone = models.CharField(max_length=10)
-    nic = models.CharField(max_length=12)
+
+    name = models.CharField(max_length=100, null=False, unique=True)
+    surname = models.CharField(max_length=100, null=False)
+    address = models.CharField(max_length=100, null=False)
+    telephone1 = models.CharField(max_length=100, null=False)
+    telephone2 = models.CharField(max_length=100, null=False)
+    dateofbirth = models.DateField(null=True)
+    nicnumber = models.CharField(max_length=100, null=False)
+    branch = models.CharField(max_length=20 , choices=branchLocation , default='Sewanapitiya')
     
     def __str__(self):
         return self.name
