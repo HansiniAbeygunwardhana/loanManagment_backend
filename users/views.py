@@ -26,13 +26,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-@api_view(['GET'])
-def getRoutes(request):
-    routes = [
-        '/api/token',
-        '/api/token/refresh'
-    ]
-    return Response(routes)
 
 @api_view(['POST'])
 def customer_registration(request):
