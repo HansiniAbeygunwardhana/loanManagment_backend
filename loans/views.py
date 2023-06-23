@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import loanSerializer
+from .serializers import loanSerializer , simpleLoanSerializer
 from rest_framework.response import Response
 from .models import Loan
 from rest_framework.decorators import api_view , permission_classes
@@ -12,7 +12,7 @@ def getLoans(request):
     #user = request.user
    # loan = user.loans_set.all()
     loan = Loan.objects.all()
-    serializer = loanSerializer(loan, many=True)
+    serializer = simpleLoanSerializer(loan, many=True)
     return Response(serializer.data)
 
 

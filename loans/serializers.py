@@ -20,3 +20,20 @@ class loanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Loan
         fields = '__all__'
+        
+
+class simpleLoanSerializer(serializers.ModelSerializer):
+    
+    username = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=User.objects.all()
+    )
+    
+    loaned_amount = serializers.SerializerMethodField()
+    
+    def get_loaned_amount(self, obj):
+        return str(obj.loaned_amount)
+    
+    class Meta:
+        model = Loan
+        fields = [ 'username', 'loaned_date', 'branch_location', 'loaned_amount']
