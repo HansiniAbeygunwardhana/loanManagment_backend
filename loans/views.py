@@ -22,3 +22,9 @@ def addLoans(request):
     if serializer.is_valid():
         serializer.save()
     return Response("Added Successfully")
+
+@api_view(['GET'])
+def getMoreLoanDetails(request , loan_id):
+    loan = Loan.objects.get(loan_id=loan_id)
+    serializer = loanSerializer(loan)
+    return Response(serializer.data)

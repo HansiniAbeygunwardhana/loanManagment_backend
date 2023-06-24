@@ -30,10 +30,14 @@ class simpleLoanSerializer(serializers.ModelSerializer):
     )
     
     loaned_amount = serializers.SerializerMethodField()
+    loan_id = serializers.SerializerMethodField()
     
     def get_loaned_amount(self, obj):
         return str(obj.loaned_amount)
     
+    def get_loan_id(self, obj):
+        return str(obj.loan_id)
+    
     class Meta:
         model = Loan
-        fields = [ 'username', 'loaned_date', 'branch_location', 'loaned_amount']
+        fields = [ 'loan_id','username', 'loaned_date', 'branch_location', 'loaned_amount']
