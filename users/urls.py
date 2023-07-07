@@ -12,3 +12,4 @@ urlpatterns = [
     path('staff', views.staff_registration, name='staff_registration'),
     path('viewcustomer', views.getCustomers, name='get_customers'),
 ]
+

@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from .serializers import loanSerializer , simpleLoanSerializer
+from .serializers import loanSerializer , simpleLoanSerializer , loanNumbererializer ,  loanIDandNumberSerializer
 from rest_framework.response import Response
 from .models import Loan
 from rest_framework.decorators import api_view , permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import generics
 # Create your views here.
 
 @api_view(['GET'])
@@ -28,3 +29,19 @@ def getMoreLoanDetails(request , loan_id):
     loan = Loan.objects.get(loan_id=loan_id)
     serializer = loanSerializer(loan)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def getAllLoanNumbers(request):
+    loan = Loan.objects.all()
+    serializer = loanNumbererializer(loan, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getALLLoansbyUserID(request , user_id):
+    loan = Loan.objects.get(username=user_id)
+    serializer = loanNumbererializer(loan, many=True)
+    return Response(serializer.data)
+
+class getAllLoans(generics.ListAPIView):
+    queryset = Loan.objects.all()
+    serializer_class = loanIDandNumberSerializer

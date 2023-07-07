@@ -22,6 +22,7 @@ class Loan(models.Model):
     bike_number = models.CharField(max_length=12)
     first_guarantor = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='first_guarantor', null=True)
     second_guarantor = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='second_guarantor', null=True)
+    loan_period = models.IntegerField(null=False)
     
     def save(self, *args, **kwargs):
         
