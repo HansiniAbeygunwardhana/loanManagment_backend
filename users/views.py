@@ -1,14 +1,9 @@
-from django.http import JsonResponse
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomerUsernameSerializer
-from managers.serializers import ManagerSerializer
-from customers.serializers import CustomerSerializer
-from staff.serializers import StaffSerializer
-from rest_framework import status
 from users.models import User
+from .serializers import UserSerializer
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -17,42 +12,25 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Add custom claims
         token['username'] = user.username
-        token['user_type'] = user.user_type
+        token['usertype'] = user.usertype
+        token['is_collector'] = user.is_collector
         # ...
 
         return token
 
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
-
-
-
-@api_view(['POST'])
-def customer_registration(request):
-    serializer = CustomerSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save(user_type='customer')
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-@api_view(['POST'])
-def manager_registration(request):
-    serializer = ManagerSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save(user_type='manager')
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-@api_view(['POST'])
-def staff_registration(request):
-    serializer = StaffSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save(user_type='staff')
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-@api_view(['GET'])
-def getCustomers(request):
-    customer_users = User.objects.filter(user_type='customer')
-    serializer = CustomerUsernameSerializer(customer_users, many=True)
     
-    return Response(serializer.data, status=200)
+class UserList(APIView):
+    def get(self, request, format=None):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            user.set_password(user.password)   
+        return Response(serializer.data)

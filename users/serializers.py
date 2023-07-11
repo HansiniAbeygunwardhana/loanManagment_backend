@@ -1,24 +1,7 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from .models import User
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'user_type']
-        extra_kwargs = {
-            'password': {'write_only': True},
-            'user_type': {'write_only': True}
-        }
-
-    def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = User(**validated_data)
-        user.set_password(password)
-        user.save()
-        return user
-    
-
-class CustomerUsernameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username']
+        fields = ( 'username', 'email', 'password' , 'is_collector')
