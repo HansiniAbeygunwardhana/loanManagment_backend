@@ -12,7 +12,7 @@ class loanValueSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = loanValue
-        fields ="__all__"
+        fields =[ 'payment_date' , 'payment_amount' , 'loan_number' , 'interest' , 'principle' , 'balance' , 'id']
         
 
 class loanValueSerializer2(serializers.ModelSerializer):

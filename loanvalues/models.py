@@ -1,17 +1,18 @@
 from django.db import models
 from loans.models import Loan
 import numpy as np
-from datetime import timedelta
+from datetime import datetime
 
 # Create your models here.
 
 class loanValue (models.Model):
-    loan_number = models.ForeignKey(Loan, on_delete=models.SET_NULL , null=True , related_name='customer_loan_number' , db_column='loan_number')
+    loan_number = models.ForeignKey(Loan, on_delete=models.DO_NOTHING , null=True , related_name='customer_loan_number' , db_column='loan_number')
     payment_date = models.DateField( null=False)
     payment_amount = models.FloatField( null=False )
     interest = models.FloatField( null=True )
     principle = models.FloatField( null=True )
     balance = models.FloatField( null=True )
+    interest_paid_date = models.DateField( null=True)
     
     
     
@@ -30,12 +31,13 @@ class loanValue (models.Model):
             daysfrompayment = (self.payment_date - last_record.payment_date).days
             self.interest = np.round(last_record.balance * interestperday * daysfrompayment , 2)
             self.principle = np.round(self.payment_amount - self.interest , 2)
-            self.balance = last_record.balance - self.principle
+            self.balance = np.round(last_record.balance - self.principle , 3)
         else:
             daysfrompayment = (self.payment_date - self.loan_number.loaned_date).days
+            self.interest_paid_date = datetime.now().date() - self.loan_number.loaned_date.date()
             self.interest = np.round(self.loan_number.loaned_amount * interestperday * daysfrompayment , 2)
             self.principle = np.round(self.payment_amount - self.interest , 2)
-            self.balance = self.loan_number.loaned_amount - self.principle
+            self.balance = np.round(self.loan_number.loaned_amount - self.principle , 3)
          
         super(loanValue, self).save(*args, **kwargs)
         
