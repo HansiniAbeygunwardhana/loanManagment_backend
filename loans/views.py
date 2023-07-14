@@ -43,10 +43,11 @@ def getAllLoanNumbers(request):
 
 @api_view(['GET'])
 def getALLLoansbyUserID(request , user_id):
-    loan = Loan.objects.get(username=user_id)
-    serializer = loanNumbererializer(loan, many=True)
+    loan = Loan.objects.get(username_id=user_id)
+    serializer = loanNumbererializer(loan)
     return Response(serializer.data)
 
 class getAllLoans(generics.ListAPIView):
     queryset = Loan.objects.all()
     serializer_class = loanIDandNumberSerializer
+    

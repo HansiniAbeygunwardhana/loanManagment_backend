@@ -31,11 +31,6 @@ class simpleLoanSerializer(serializers.ModelSerializer):
         
 class loanNumbererializer(serializers.ModelSerializer):
     
-    username = serializers.SlugRelatedField(
-        slug_field='username',
-        queryset=User.objects.all()
-    )
-    
     class Meta:
         model = Loan
         fields = [ 'loan_id','username', 'loaned_amount' , 'loan_number']
