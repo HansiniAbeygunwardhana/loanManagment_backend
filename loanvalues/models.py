@@ -1,7 +1,7 @@
 from django.db import models
 from loans.models import Loan
 import numpy as np
-from datetime import datetime
+from datetime import date , timedelta
 
 # Create your models here.
 
@@ -28,16 +28,32 @@ class loanValue (models.Model):
         
         last_record = loanValue.objects.filter(loan_number=self.loan_number).order_by('-id').first()
         if last_record:
-            daysfrompayment = (self.payment_date - last_record.payment_date).days
-            self.interest = np.round(last_record.balance * interestperday * daysfrompayment , 2)
-            self.principle = np.round(self.payment_amount - self.interest , 2)
-            self.balance = np.round(last_record.balance - self.principle , 3)
+            tobepaid_days = self.payment_date - last_record.interest_paid_date
+            if self.payment_amount > tobepaid_days.days * last_record.balance * interestperday:
+                self.interest = np.round(tobepaid_days.days * last_record.balance * interestperday , 2)
+                self.principle = np.round(self.payment_amount - self.interest , 2)
+                self.balance = last_record.balance - self.principle
+                self.interest_paid_date = last_record.interest_paid_date + tobepaid_days
+            else:
+                canbepaid_days = int(self.payment_amount / (last_record.balance * interestperday))
+                self.interest_paid_date = last_record.interest_paid_date + timedelta(days=canbepaid_days)
+                self.balance = last_record.balance
+                self.principle = 0
+                self.interest = self.payment_amount
         else:
-            daysfrompayment = (self.payment_date - self.loan_number.loaned_date).days
-            self.interest_paid_date = datetime.now().date() - self.loan_number.loaned_date.date()
-            self.interest = np.round(self.loan_number.loaned_amount * interestperday * daysfrompayment , 2)
-            self.principle = np.round(self.payment_amount - self.interest , 2)
-            self.balance = np.round(self.loan_number.loaned_amount - self.principle , 3)
+            tobepaid_days = self.payment_date - self.loan_number.loaned_date
+            if self.payment_amount > tobepaid_days.days * self.loan_number.loaned_amount * interestperday:
+                self.interest = np.round(tobepaid_days.days * self.loan_number.loaned_amount * interestperday , 2)
+                self.principle = np.round(self.payment_amount - self.interest , 2)
+                self.balance = self.loan_number.loaned_amount - self.principle
+                self.interest_paid_date = self.loan_number.loaned_date + tobepaid_days
+            else:
+                canbepaid_days = int(self.payment_amount / (self.loan_number.loaned_amount * interestperday))
+                self.interest_paid_date = self.loan_number.loaned_date + timedelta(days=canbepaid_days)
+                self.balance = self.loan_number.loaned_amount
+                self.principle = 0
+                self.interest = self.payment_amount
+            
          
         super(loanValue, self).save(*args, **kwargs)
         
