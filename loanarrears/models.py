@@ -15,15 +15,12 @@ class loanarrears(models.Model):
     arr_cal_date = models.DateField( null=False , default=timezone.now)
     staff = models.ForeignKey(StaffProfile, on_delete=models.DO_NOTHING , related_name='loanarrears' , null=True)
     loan_values = models.ForeignKey(loanValue, on_delete=models.DO_NOTHING , related_name='loanarrears')
-    additional_fees = models.FloatField( null=True )
+    additional_fees = models.FloatField( null=False , default=0 )
     
     
     def save(self, *args, **kwargs):
         
         last_loanarrears = loanarrears.objects.filter(loan_id=self.loan_id).order_by('-id').first()
-        if last_loanarrears:
-            self.staff = StaffProfile.objects.get(staff_id=self.staff.id)
-            self.additional_fees += last_loanarrears.additional_fees
             
         interestrate = 42.0
         arr_months = relativedelta(self.arr_cal_date , self.loan_id.loaned_date).months
