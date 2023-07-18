@@ -17,6 +17,13 @@ class StaffProfileSerializer(serializers.ModelSerializer):
         user = user_serializer.save()
         staff_profile = StaffProfile.objects.create(user=user, **validated_data)
         return staff_profile
+    
+    
+class StaffSerializerByName(serializers.ModelSerializer):
+        
+        class Meta:
+            model = StaffProfile
+            fields = ['name' , 'assigned_location' , 'id']
         
     
     

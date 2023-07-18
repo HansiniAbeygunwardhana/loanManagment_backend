@@ -43,3 +43,12 @@ class LoanArrearsList(generics.ListAPIView):
         latest_records = loanarrears.objects.values('loan_id').annotate(max_id=Max('id')).values('max_id')
         queryset = loanarrears.objects.filter(id__in=latest_records)
         return queryset
+    
+class AddAllLoanArrears(APIView):
+    def post(self, request):
+        arrears_data = request.data
+        serializer = loanArrearsSerializerBasic(data=arrears_data , many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response("Failed to add arrears", status=status.HTTP_400_BAD_REQUEST)
