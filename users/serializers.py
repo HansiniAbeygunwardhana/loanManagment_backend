@@ -10,6 +10,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Add custom claims
         token['username'] = user.username
         token['usertype'] = user.usertype
+        token['is_collector'] = user.is_collector
         # ...
 
         return token
@@ -17,4 +18,4 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserSerializer(ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'password' , 'usertype')
+        fields = ('username', 'email', 'password' , 'usertype' , 'is_collector')

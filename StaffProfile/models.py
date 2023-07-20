@@ -21,7 +21,6 @@ class StaffProfile (models.Model):
     dateofbirth = models.DateField(null=True)
     nicnumber = models.CharField(max_length=100, null=False)
     branch = models.CharField(max_length=20 , choices=branchLocation , default='Sewanapitiya')
-    is_collector = models.BooleanField(default=False)
     assigned_location = models.CharField(max_length=100, null=True)
     
     def __str__(self):

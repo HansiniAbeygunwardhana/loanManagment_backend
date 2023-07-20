@@ -3,6 +3,7 @@ from .serializers import CustomerProfileSerializer , CustomerNameIDSerializer
 from .models import CustomerProfile
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser , JSONParser
 # Create your views here.
 
 class ListCustomer(APIView):
@@ -13,11 +14,15 @@ class ListCustomer(APIView):
     
 
 class AddCustomer(APIView):
+    
+    parser_classes = (MultiPartParser, FormParser , JSONParser)
+    
     def post(self, request):
         serializer = CustomerProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data , status=201)
+        print(serializer.errors)
         return Response(serializer.errors , status=400)
     
     
