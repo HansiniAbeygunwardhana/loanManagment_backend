@@ -21,6 +21,8 @@ class loanarrears(models.Model):
     def save(self, *args, **kwargs):
         
         last_loanarrears = loanarrears.objects.filter(loan_id=self.loan_id).order_by('-id').first()
+        if last_loanarrears:
+            self.staff = last_loanarrears.staff
             
         interestrate = 42.0
         arr_months = relativedelta(self.arr_cal_date , self.loan_id.loaned_date).months
@@ -56,6 +58,14 @@ class loanarrears(models.Model):
         
         return loanamount - total_principle
     
+    
+    @classmethod
+    def filter_by_assigned_location(cls, location):
+        return cls.objects.filter(staff__assigned_location=location)
+    
+    @classmethod
+    def filter_by_loanaddress(cls , location):
+        return cls.objects.filter(loan_id__username__address__icontains=location)
     
     
     

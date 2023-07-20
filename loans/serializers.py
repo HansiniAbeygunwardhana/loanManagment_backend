@@ -1,7 +1,7 @@
 from rest_framework import  serializers	
 from .models import Loan
 from CustomerProfile.models import CustomUser as User
-from CustomerProfile.serializers import CustomerNameIDSerializer
+from CustomerProfile.serializers import CustomerNameIDSerializer , CustomerProfileOnlySerializer
 
 class loanSerializer(serializers.ModelSerializer):
         
@@ -43,3 +43,13 @@ class loanIDandNumberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Loan
         fields = [ 'loan_id','username', 'loan_number']
+        
+class loanSerializerExtended(serializers.ModelSerializer):
+        
+    username = CustomerProfileOnlySerializer()
+    first_guarantor = CustomerProfileOnlySerializer()
+    second_guarantor = CustomerProfileOnlySerializer()
+    
+    class Meta:
+        model = Loan
+        fields = '__all__'

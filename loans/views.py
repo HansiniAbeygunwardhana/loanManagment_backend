@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import loanSerializer , simpleLoanSerializer , loanNumbererializer ,  loanIDandNumberSerializer
+from .serializers import loanSerializer , simpleLoanSerializer , loanNumbererializer ,  loanIDandNumberSerializer, loanSerializerExtended
 from rest_framework.response import Response
 from .models import Loan
 from rest_framework.decorators import api_view , permission_classes
@@ -50,4 +50,13 @@ def getALLLoansbyUserID(request , user_id):
 class getAllLoans(generics.ListAPIView):
     queryset = Loan.objects.all()
     serializer_class = loanIDandNumberSerializer
+ 
+@api_view(['GET'])   
+def getLoansByLoanNumber(request, loan_number):
+    try:
+        loan = Loan.objects.get(loan_number=loan_number)
+        serializer = loanSerializerExtended(loan)  # Ensure that the serializer class name is correct (LoanSerializer)
+        return Response(serializer.data)
+    except Loan.DoesNotExist:
+        return Response({'error': 'Loan not found'}, status=404)
     

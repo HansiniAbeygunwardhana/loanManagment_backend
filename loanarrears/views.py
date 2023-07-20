@@ -52,3 +52,12 @@ class AddAllLoanArrears(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response("Failed to add arrears", status=status.HTTP_400_BAD_REQUEST)
+    
+class ListLoanArrearsByLocation(generics.ListAPIView):
+    
+    serializer_class = loanArrearsSerializer
+    
+    def get_queryset(self):
+        location = self.request.query_params.get('location')
+        queryset = loanarrears.filter_by_loanaddress(location=location)
+        return queryset

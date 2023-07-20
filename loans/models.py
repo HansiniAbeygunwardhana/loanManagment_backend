@@ -36,7 +36,7 @@ class Loan(models.Model):
           
         if not self.loan_number:
                 branch_code = BRANCH_CODES.get(self.branch_location)
-                last_loan = Loan.objects.filter(loan_number__endswith=f'/{branch_code}').order_by('-loan_id').first()
+                last_loan = Loan.objects.filter(loan_number__endswith=f'-{branch_code}').order_by('-loan_id').first()
                 if last_loan:
                     last_number = int(last_loan.loan_number.split("-")[1])
                     next_number = last_number + 1

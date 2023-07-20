@@ -25,3 +25,10 @@ class CustomerNameIDSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = ['name' , 'id']
+        
+        
+class CustomerProfileOnlySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = CustomerProfile
+        fields = '__all__'
