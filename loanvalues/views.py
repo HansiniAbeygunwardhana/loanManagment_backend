@@ -20,11 +20,6 @@ class LoanValueCreateView(generics.CreateAPIView):
     def post(self , request ):
         serializer = LoanValueSerializer(data=request.data)
         if serializer.is_valid():
-            subject = 'Loan Payment'
-            message = 'Your loan payment has been received'
-            email_from = settings.EMAIL_HOST_USER
-            recepient = str(request.data['loan_number']['username']['user']['email'])
-            # send_mail(subject, message, email_from, recepient)
             serializer.save()
             return Response(serializer.data , status=201)
 
