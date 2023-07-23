@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import loanSerializer , simpleLoanSerializer , loanNumbererializer ,  loanIDandNumberSerializer, loanSerializerExtended
+from .serializers import loanSerializer , simpleLoanSerializer , loanSerializerCustomerId, loanNumbererializer ,  loanIDandNumberSerializer, loanSerializerExtended
 from rest_framework.response import Response
 from .models import Loan
 from rest_framework.decorators import api_view , permission_classes
@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
+from rest_framework.views import APIView
 # Create your views here.
 
 @api_view(['GET'])
@@ -59,4 +60,14 @@ def getLoansByLoanNumber(request, loan_number):
         return Response(serializer.data)
     except Loan.DoesNotExist:
         return Response({'error': 'Loan not found'}, status=404)
+    
+
+class LoanUsernameAPIView(APIView):
+    def get(self, request,  loan_number):
+        try:
+            loan = Loan.objects.get(loan_number=loan_number)
+            serializer = loanSerializerCustomerId(loan)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Loan.DoesNotExist:
+            return Response({"error": "Loan number not found"}, status=status.HTTP_404_NOT_FOUND)
     

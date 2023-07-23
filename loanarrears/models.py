@@ -6,6 +6,7 @@ from loanvalues.models import loanValue
 import numpy_financial as npf
 import numpy as np
 from dateutil.relativedelta import relativedelta
+from django.db.models import Q
 
 # Create your models here.
 class loanarrears(models.Model):
@@ -13,17 +14,22 @@ class loanarrears(models.Model):
     monthly_payment = models.FloatField()
     monthly_arrears = models.FloatField()
     arr_cal_date = models.DateField( null=False , default=timezone.now)
-    staff = models.ForeignKey(StaffProfile, on_delete=models.DO_NOTHING , related_name='loanarrears' , null=True)
-    loan_values = models.ForeignKey(loanValue, on_delete=models.DO_NOTHING , related_name='loanarrears')
+    staff = models.ForeignKey(StaffProfile, on_delete=models.SET_NULL , related_name='loanarrears' , null=True)
+    loan_values = models.ForeignKey(loanValue, on_delete=models.SET_NULL , related_name='loanarrears' , null=True)
     additional_fees = models.FloatField( null=False , default=0 )
     
     
     def save(self, *args, **kwargs):
         
-        last_loanarrears = loanarrears.objects.filter(loan_id=self.loan_id).order_by('-id').first()
-        if last_loanarrears:
-            self.staff = last_loanarrears.staff
-            
+        MAX_RECORDS_PER_LOAN = 3
+        
+        # Check if a staff was previously assigned to this loan ID
+        if self.loan_id:
+            last_loanarrears = loanarrears.objects.filter(loan_id=self.loan_id).order_by('-id').first()
+            if last_loanarrears:
+                self.staff = last_loanarrears.staff
+                
+                  
         interestrate = 42.0
         arr_months = relativedelta(self.arr_cal_date , self.loan_id.loaned_date).months
         loanRecord = Loan.objects.get(loan_id=self.loan_id.loan_id)
@@ -46,6 +52,13 @@ class loanarrears(models.Model):
                 not_paid_interest = (self.arr_cal_date - self.loan_id.loaned_date).days * loanRecord.loaned_amount * interestrate / 365 / 100
                 self.monthly_arrears = np.round(loanRecord.loaned_amount + not_paid_interest - should_have_balance , 2)
 
+        # Check if this loan ID already has 5 records
+        existing_records_count = loanarrears.objects.filter(loan_id=self.loan_id).count()
+        if existing_records_count >= MAX_RECORDS_PER_LOAN:
+            # Delete the oldest record
+            oldest_record = loanarrears.objects.filter(loan_id=self.loan_id).order_by('id').first()
+            oldest_record.delete()
+
         super(loanarrears, self).save(*args, **kwargs)
         
         
@@ -66,6 +79,12 @@ class loanarrears(models.Model):
     @classmethod
     def filter_by_loanaddress(cls , location):
         return cls.objects.filter(loan_id__username__address__icontains=location)
+    
+    @classmethod
+    def filter_by_location_and_price(cls , location , pricemax , pricemin):
+        return cls.objects.filter(Q(loan_id__username__address__icontains=location) & Q(loan_id__loaned_amount__lte=pricemax) & Q(loan_id__loaned_amount__gt=pricemin))
+    
+    
     
     
     

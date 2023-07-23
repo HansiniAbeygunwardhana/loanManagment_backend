@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import getLoans, addLoans, getMoreLoanDetails, getAllLoanNumbers ,getAllLoans , getALLLoansbyUserID , getLoansByLoanNumber
+from .views import getLoans, addLoans, LoanUsernameAPIView, getMoreLoanDetails, getAllLoanNumbers ,getAllLoans , getALLLoansbyUserID , getLoansByLoanNumber
 
 # http://127.0.0.1:8000/loans/...............
 
@@ -10,4 +10,6 @@ urlpatterns = [
     path('allnumbers', getAllLoans.as_view(), name='getallnumbers'),
     path('getbyid/<int:user_id>', getALLLoansbyUserID, name='getallnumbersbyid'),
     path('getbylnum/<str:loan_number>', getLoansByLoanNumber, name='getallnumbersbylnum'),
+    path('getname/<str:loan_number>', LoanUsernameAPIView.as_view(), name='getallnumbersbyusername')	
+    
 ]

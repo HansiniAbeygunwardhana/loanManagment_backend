@@ -53,3 +53,11 @@ class loanSerializerExtended(serializers.ModelSerializer):
     class Meta:
         model = Loan
         fields = '__all__'
+        
+class loanSerializerCustomerId(serializers.ModelSerializer):
+    
+    userId = serializers.IntegerField(source='username_id')
+    
+    class Meta:
+        model = Loan
+        fields = [ 'userId', 'loan_number']

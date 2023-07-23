@@ -35,3 +35,9 @@ class CustomerProfileOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = '__all__'
+        
+class CustomerImageOnlySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = CustomerProfile
+        fields = ['profileimage']
