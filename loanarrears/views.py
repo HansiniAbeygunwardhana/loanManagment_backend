@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import loanArrearsSerializerBasic , loanArrearsSerializer
+from .serializers import loanArrearsSerializerBasic , loanArrearsSerializer, ArrearsCardSerializer
 from rest_framework import status
 from .models import loanarrears
 from django_filters import rest_framework as filters
 from rest_framework import generics
 from django.db.models import Max
-from .utils import loanarrearsuils
+from .utils import loanarrearsuils 
 # Create your views here.
 
 class AddArrears(APIView):
@@ -76,8 +76,19 @@ class FilterLoanArrears(generics.ListAPIView):
 
         if not (location or pricemax or pricemin):
             latest_records = loanarrears.objects.values('loan_id').annotate(max_id=Max('id')).values('max_id')
-            return loanarrears.objects.filter(id__in=latest_records)
+            return loanarrears.objects.filter(id__in=latest_records).exclude(monthly_arrears = 0.0)
 
-        queryset = loanarrearsuils.filter_by_location_and_price(location, pricemax, pricemin)
+        queryset = loanarrearsuils.filter_by_location_and_price(location, pricemax, pricemin).exclude(monthly_arrears = 0.0)
 
+        return queryset
+    
+class FilterLoanArrearsbyStaff(generics.ListAPIView):
+    
+    serializer_class = ArrearsCardSerializer
+    
+    def get_queryset(self):
+        staffName = self.request.query_params.get('staff')
+        
+        queryset = loanarrearsuils.filter_by_assigned_staff(staffName=staffName)
+        
         return queryset

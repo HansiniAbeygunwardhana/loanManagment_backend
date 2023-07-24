@@ -28,6 +28,9 @@ class loanarrears(models.Model):
             last_loanarrears = loanarrears.objects.filter(loan_id=self.loan_id).order_by('-id').first()
             if last_loanarrears:
                 self.staff = last_loanarrears.staff
+            else :
+                pass
+            
                 
                   
         interestrate = 42.0

@@ -1,5 +1,5 @@
 from .models import loanarrears
-from django.db.models import Q
+from django.db.models import OuterRef, Subquery , F
 
 class loanarrearsuils:
     @classmethod
@@ -23,6 +23,14 @@ class loanarrearsuils:
         if pricemin:
             queryset = queryset.filter(monthly_arrears__gt=pricemin)
             
-        queryset = queryset.values('loanarrears_id').distinct()
+        queryset = queryset.values('loan_id').distinct()
 
+        return queryset
+    
+    @classmethod
+    def filter_by_assigned_staff(cls, staffName):
+        
+        subquery = loanarrears.objects.filter(loan_id=OuterRef('loan_id'), staff__name__icontains=staffName).order_by('loan_id')
+        queryset = loanarrears.objects.annotate(latest_id=Subquery(subquery.values('id')[:1]))
+        queryset = queryset.filter(id=F('latest_id')).order_by('loan_id__branch_location')
         return queryset
