@@ -20,16 +20,12 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
         customer_profile = CustomerProfile.objects.create(user=user, **validated_data)
         return customer_profile
 
-    
-    
-
 class CustomerNameIDSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomerProfile
         fields = ['name' , 'id']
-        
-        
+               
 class CustomerProfileOnlySerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -41,3 +37,10 @@ class CustomerImageOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = ['profileimage']
+        
+        
+class HomeScreenCustomerSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = CustomerProfile
+        fields = ['name' , 'surname' , 'profileimage' , 'address' ]

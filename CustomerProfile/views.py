@@ -1,10 +1,13 @@
 from django.shortcuts import render
-from .serializers import CustomerProfileSerializer , CustomerNameIDSerializer , CustomerProfileOnlySerializer , CustomerImageOnlySerializer
+from .serializers import CustomerProfileSerializer , CustomerNameIDSerializer , CustomerProfileOnlySerializer , CustomerImageOnlySerializer , HomeScreenCustomerSerializer
 from .models import CustomerProfile
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser , JSONParser
 from django.shortcuts import get_object_or_404
+from loans.models import Loan
+from loanvalues.models import loanValue
+from loanarrears.models import loanarrears
 # Create your views here.
 
 class ListCustomer(APIView):
@@ -55,3 +58,55 @@ class UpdateCustomerImage(APIView):
             serializer.save()
             return Response(serializer.data, status=200)
         return Response(serializer.errors, status=400)
+    
+
+class GetDataCustomerHome(APIView):
+    def get(self, request, id):
+        try : 
+            customer = get_object_or_404(CustomerProfile, user_id=id)
+            loan = Loan.objects.get(username=customer)
+            loanpayments = loanValue.objects.filter(loan_number=loan.loan_id).order_by('-id').first()
+            loanarrearsdata = loanarrears.objects.filter(loan_id=loan.loan_id).order_by('-id').first()
+            
+            if loanpayments:
+                last_payment = loanpayments.payment_amount
+                last_payment_date = loanpayments.payment_date
+            else:
+                last_payment = 0.0
+                last_payment_date = None
+            
+            if loanarrearsdata:
+                arrears = loanarrearsdata.monthly_arrears
+                arr_cal_date = loanarrearsdata.arr_cal_date
+            else:
+                arrears = 0.0
+                arr_cal_date = None
+            
+            data = {
+                "loan_id" : loan.loan_id,
+                "loan_number" : loan.loan_number,
+                "customer_id" : customer.id,
+                "customer_name" : customer.name,
+                "customer_address" : customer.address,
+                "profileimage" : customer.profileimage.url,
+                "loaned_amount" : loan.loaned_amount,
+                "last_payment" : last_payment,
+                "last_payment_date" : last_payment_date,
+                "arrears" : arrears,
+                "arrears_date" : arr_cal_date,
+                "monthly_payment" : loanarrearsdata.monthly_payment,
+                
+            }
+            
+            return Response(data=data , status=200)
+        
+        except CustomerProfile.DoesNotExist:
+            return Response(status=404 , data={'message' : 'Customer does not exist'})
+        except Loan.DoesNotExist:
+            return Response(status=404 , data={'message' : 'Loan does not exist'})
+        except loanValue.DoesNotExist:
+            return Response(status=404 , data={'message' : 'No loan payments found'})
+        except loanarrears.DoesNotExist:
+            return Response(status=404 , data={'message' : 'No loan arrears found'})
+        
+            

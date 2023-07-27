@@ -1,5 +1,5 @@
 from django.db import models
-from CustomerProfile.models import CustomerProfile as User
+from CustomerProfile.models import CustomerProfile
 from django.conf import settings
 
 # Create your models here.
@@ -15,13 +15,13 @@ class Loan(models.Model):
     
     loan_id = models.AutoField(primary_key=True)
     loan_number = models.CharField(max_length=12, unique=True ,blank=True)
-    username = models.ForeignKey(User, on_delete=models.SET_NULL , null=True)
+    username = models.OneToOneField(CustomerProfile, on_delete=models.CASCADE , null=True)
     loaned_date = models.DateField( null=False)
     branch_location = models.CharField(max_length=20, choices=branches)
     loaned_amount = models.FloatField(null=False)
     bike_number = models.CharField(max_length=12)
-    first_guarantor = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='first_guarantor', null=True)
-    second_guarantor = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='second_guarantor', null=True)
+    first_guarantor = models.ForeignKey(CustomerProfile, on_delete=models.SET_NULL, related_name='first_guarantor', null=True)
+    second_guarantor = models.ForeignKey(CustomerProfile, on_delete=models.SET_NULL, related_name='second_guarantor', null=True)
     loan_period = models.IntegerField(null=False)
     
     def save(self, *args, **kwargs):
