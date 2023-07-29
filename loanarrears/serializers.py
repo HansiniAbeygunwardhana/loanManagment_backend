@@ -9,10 +9,12 @@ class loanArrearsSerializerBasic(serializers.ModelSerializer):
 class loanArrearsSerializer(serializers.ModelSerializer):
     
     loan_id = serializers.CharField(source='loan_id.loan_number')
+    customer_id  = serializers.CharField(source='loan_id.username.id')
+    staff = serializers.CharField(source='staff.name')
     
     class Meta:
         model = loanarrears
-        fields = '__all__'
+        fields = ['id', 'loan_id' , 'monthly_arrears' , 'monthly_payment' , 'arr_cal_date' , 'additional_fees' , 'customer_id', 'staff' ]
         
 class ArrearsCardSerializer(serializers.ModelSerializer):
     

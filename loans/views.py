@@ -8,6 +8,9 @@ from rest_framework import generics
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.views import APIView
+from CustomerProfile.models import CustomerProfile
+from loanvalues.models import loanValue
+from loanarrears.models import loanarrears
 # Create your views here.
 
 @api_view(['GET'])
@@ -69,5 +72,32 @@ class LoanUsernameAPIView(APIView):
             serializer = loanSerializerCustomerId(loan)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Loan.DoesNotExist:
+            return Response({"error": "Loan number not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+class ListWebDataView(APIView):
+    def get(self, request , loan_id):
+        try: 
+            loans = Loan.objects.get(loan_id=loan_id)
+            customers = CustomerProfile.objects.get(id=loans.username_id)
+            payments = loanValue.objects.filter(loan_number=loans.loan_id).latest('id')
+            loanarrearsdata = loanarrears.objects.filter(loan_id=loans.loan_id).latest('id')
+        
+        
+            data ={
+                'loan_number': loans.loan_number,
+                'loan_id' : loans.loan_id,
+                'customer_name' : customers.name,
+                'customer_image' : customers.profileimage.url,
+                'last_payment_amount' : payments.payment_amount,
+                'last_payment_date' : payments.payment_date,
+                'monthly_payment' : loanarrearsdata.monthly_payment,
+                'customer_id' : customers.id,
+                
+                
+            }
+            
+            return Response(data, status=status.HTTP_200_OK)
+        
+        except:
             return Response({"error": "Loan number not found"}, status=status.HTTP_404_NOT_FOUND)
     

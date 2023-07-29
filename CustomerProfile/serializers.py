@@ -28,9 +28,12 @@ class CustomerNameIDSerializer(serializers.ModelSerializer):
                
 class CustomerProfileOnlySerializer(serializers.ModelSerializer):
     
+    profileimage = serializers.ImageField(max_length=None, use_url=True)
+    email = serializers.EmailField(source='user.email')
+    
     class Meta:
         model = CustomerProfile
-        fields = '__all__'
+        fields = ['name' , 'surname' , 'address' , 'telephone1' , 'telephone2' , 'dateofbirth' , 'nicnumber' , 'profileimage' , 'nicimagefront' , 'nicimageback' , 'email'	]
         
 class CustomerImageOnlySerializer(serializers.ModelSerializer):
     
