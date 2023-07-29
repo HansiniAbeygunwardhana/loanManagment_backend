@@ -1,5 +1,6 @@
 from .models import loanarrears
 from django.db.models import OuterRef, Subquery , F
+from django.db.models import Max
 
 class loanarrearsuils:
     @classmethod
@@ -8,7 +9,7 @@ class loanarrearsuils:
         
     @classmethod
     def filter_by_loanaddress(cls , location):
-            return loanarrears.filter_by_loanaddress(location)
+            return loanarrears.filter_by_loanaddress(location).exclude(monthly_arrears = 0)
         
     @classmethod
     def filter_by_location_and_price(cls ,location, pricemax, pricemin):
@@ -32,5 +33,10 @@ class loanarrearsuils:
         
         subquery = loanarrears.objects.filter(loan_id=OuterRef('loan_id'), staff__name__icontains=staffName).order_by('loan_id')
         queryset = loanarrears.objects.annotate(latest_id=Subquery(subquery.values('id')[:1]))
-        queryset = queryset.filter(id=F('latest_id')).order_by('loan_id__branch_location')
+        queryset = queryset.filter(id=F('latest_id')).order_by('loan_id__branch_location').exclude(monthly_arrears = 0)
         return queryset
+    
+    
+    @classmethod
+    def filter_by_loan_id(cls):
+        return loanarrears.objects.filter(id__in=loanarrears.objects.values('loan_id').annotate(max_id=Max('id')).values('max_id')).exclude(monthly_arrears = 0)

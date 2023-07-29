@@ -8,6 +8,8 @@ from django_filters import rest_framework as filters
 from rest_framework import generics
 from django.db.models import Max
 from .utils import loanarrearsuils 
+from django.db.models import OuterRef, Subquery
+from django.db import models
 # Create your views here.
 
 class AddArrears(APIView):
@@ -75,8 +77,8 @@ class FilterLoanArrears(generics.ListAPIView):
         latest_records = loanarrears.objects.values('loan_id').annotate(max_id=Max('id')).values('max_id')
 
         if not (location or pricemax or pricemin):
-            latest_records = loanarrears.objects.values('loan_id').annotate(max_id=Max('id')).values('max_id')
-            return loanarrears.objects.filter(id__in=latest_records).exclude(monthly_arrears = 0.0)
+            latest_records = loanarrearsuils.filter_by_loan_id()
+            return latest_records
 
         queryset = loanarrearsuils.filter_by_location_and_price(location, pricemax, pricemin).exclude(monthly_arrears = 0.0)
 
@@ -91,4 +93,14 @@ class FilterLoanArrearsbyStaff(generics.ListAPIView):
         
         queryset = loanarrearsuils.filter_by_assigned_staff(staffName=staffName)
         
+        return queryset
+    
+    
+    
+class LoanArrearsListView(generics.ListAPIView):
+    
+    serializer_class = loanArrearsSerializer
+
+    def get_queryset(self):
+        queryset = loanarrearsuils.filter_by_loan_id()
         return queryset

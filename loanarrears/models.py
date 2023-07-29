@@ -7,6 +7,8 @@ import numpy_financial as npf
 import numpy as np
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
+from django.core.exceptions import ValidationError
+
 
 # Create your models here.
 class loanarrears(models.Model):
@@ -14,7 +16,7 @@ class loanarrears(models.Model):
     monthly_payment = models.FloatField()
     monthly_arrears = models.FloatField()
     arr_cal_date = models.DateField( null=False , default=timezone.now)
-    staff = models.ForeignKey(StaffProfile, on_delete=models.SET_NULL , related_name='loanarrears' , null=True)
+    staff = models.ForeignKey(StaffProfile, on_delete=models.DO_NOTHING , related_name='loanarrears' , default=4)
     loan_values = models.ForeignKey(loanValue, on_delete=models.SET_NULL , related_name='loanarrears' , null=True)
     additional_fees = models.FloatField( null=False , default=0 )
     
@@ -74,6 +76,10 @@ class loanarrears(models.Model):
         
         return loanamount - total_principle
     
+    def clean(self):
+        # Check if monthly_arrears is 0, and if so, prevent saving the model
+        if self.monthly_arrears == 0:
+            raise ValidationError("Monthly arrears must be greater than 0 to save the model.")
     
     @classmethod
     def filter_by_assigned_location(cls, location):
