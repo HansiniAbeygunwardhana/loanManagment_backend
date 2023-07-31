@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from CustomerProfile.models import CustomerProfile
 from loanvalues.models import loanValue
 from loanarrears.models import loanarrears
+from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 
 @api_view(['GET'])
@@ -29,6 +30,7 @@ def addLoans(request):
     if serializer.is_valid():
         serializer.save()
     return Response("Added Successfully")
+        
 
 @api_view(['GET'])
 def getMoreLoanDetails(request, loan_id):
@@ -75,29 +77,44 @@ class LoanUsernameAPIView(APIView):
             return Response({"error": "Loan number not found"}, status=status.HTTP_404_NOT_FOUND)
         
 class ListWebDataView(APIView):
-    def get(self, request , loan_id):
+    def get(self, request, loan_id):
         try: 
             loans = Loan.objects.get(loan_id=loan_id)
-            customers = CustomerProfile.objects.get(id=loans.username_id)
-            payments = loanValue.objects.filter(loan_number=loans.loan_id).latest('id')
-            loanarrearsdata = loanarrears.objects.filter(loan_id=loans.loan_id).latest('id')
-        
-        
-            data ={
+            customers = None
+            payments = None
+            loanarrearsdata = None
+
+            try:
+                customers = CustomerProfile.objects.get(id=loans.username_id)
+            except ObjectDoesNotExist:
+                pass
+
+            try:
+                payments = loanValue.objects.filter(loan_number=loans.loan_id).latest('id')
+            except ObjectDoesNotExist:
+                pass
+
+            try:
+                loanarrearsdata = loanarrears.objects.filter(loan_id=loans.loan_id).latest('id')
+            except ObjectDoesNotExist:
+                pass
+            
+            data = {
                 'loan_number': loans.loan_number,
-                'loan_id' : loans.loan_id,
-                'customer_name' : customers.name,
-                'customer_image' : customers.profileimage.url,
-                'last_payment_amount' : payments.payment_amount,
-                'last_payment_date' : payments.payment_date,
-                'monthly_payment' : loanarrearsdata.monthly_payment,
-                'customer_id' : customers.id,
-                
-                
+                'loan_id': loans.loan_id,
+                'customer_name': customers.name if customers else 0,
+                'customer_image': customers.profileimage.url if customers else 0,
+                'last_payment_amount': payments.payment_amount if payments else 0,
+                'last_payment_date': payments.payment_date if payments else 0,
+                'monthly_payment': loanarrearsdata.monthly_payment if loanarrearsdata else 0,
+                'customer_id': customers.id if customers else 0,
             }
             
             return Response(data, status=status.HTTP_200_OK)
         
-        except:
+        except Loan.DoesNotExist:
             return Response({"error": "Loan number not found"}, status=status.HTTP_404_NOT_FOUND)
     
+
+    
+

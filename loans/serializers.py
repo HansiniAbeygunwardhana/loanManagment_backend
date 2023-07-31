@@ -61,3 +61,14 @@ class loanSerializerCustomerId(serializers.ModelSerializer):
     class Meta:
         model = Loan
         fields = [ 'userId', 'loan_number']
+        
+        
+class loanSerializerCustomerId(serializers.ModelSerializer):
+    
+    username = serializers.CharField(source='username.username')
+    first_guarantor = serializers.CharField(source='first_guarantor.username')
+    second_guarantor = serializers.CharField(source='second_guarantor.username')
+    
+    class Meta:
+        model = Loan
+        fields = '__all__'
