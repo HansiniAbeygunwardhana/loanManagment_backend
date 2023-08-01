@@ -31,7 +31,7 @@ class loanarrears(models.Model):
             if last_loanarrears:
                 self.staff = last_loanarrears.staff
             else :
-                pass
+                self.staff = StaffProfile.objects.get(id=1)
             
                 
                   

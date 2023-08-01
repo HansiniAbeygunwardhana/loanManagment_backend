@@ -1,14 +1,18 @@
 from django.contrib import admin
 from .models import Loan
 
-class LoanAdmin(admin.ModelAdmin):
-    search_fields = ['loan_number' , 'username']  # Add the field by which you want to search (loan_number in this case)
+def mark_as_pending(modeladmin, request, queryset):
+    queryset.update(pending=True)
+    
+mark_as_pending.short_description = "Mark selected loans as pending"
 
-    # You can customize other attributes of the admin view if needed
+class LoanAdmin(admin.ModelAdmin):
+    search_fields = ['loan_number' , 'username']
     list_display = ['loan_number', 'username', 'loaned_date', 'branch_location', 'loaned_amount', 'bike_number', 'loan_period']
     list_filter = ['branch_location', 'loaned_date']
     ordering = ['-loaned_date', 'loan_number']
-    # ... (other attributes as needed)
-
-# Register the Loan model with the custom admin view
+    actions = [mark_as_pending]
 admin.site.register(Loan, LoanAdmin)
+
+
+

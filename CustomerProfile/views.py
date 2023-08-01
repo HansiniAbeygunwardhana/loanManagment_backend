@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import CustomerProfileSerializer , CustomerNameIDSerializer , CustomerProfileOnlySerializer , CustomerImageOnlySerializer , HomeScreenCustomerSerializer
+from .serializers import CustomerProfileSerializer , CustomerNameIDSerializer , BasicCustomerData, CustomerProfileOnlySerializer , CustomerImageOnlySerializer , HomeScreenCustomerSerializer
 from .models import CustomerProfile
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -108,5 +108,41 @@ class GetDataCustomerHome(APIView):
             return Response(status=404 , data={'message' : 'No loan payments found'})
         except loanarrears.DoesNotExist:
             return Response(status=404 , data={'message' : 'No loan arrears found'})
+        
+
+class ListBasicCustomerData(APIView):
+    def get(self, request):
+        
+        try:
+            customers = CustomerProfile.objects.all()
+            
+            customer_data = []
+            
+            for customer in customers:
+                loan = Loan.objects.filter(username_id=1).first()
+                
+                print(loan.branch_location)
+                if loan:
+                    loan_number = loan.loan_number
+                else:
+                    loan_number = None
+                
+                item = {
+                    "name" : customer.name,
+                    "telephone1" : customer.telephone1,
+                    "nicnumber" : customer.nicnumber,
+                    "loan_number" : loan_number,
+                    "loan_id" : str(loan.loan_id),
+                    "customer_id" : str(customer.id),
+                }
+                
+                customer_data.append(item)
+                
+            return Response(customer_data, status=200)
+        
+        except:
+            return Response(status=404 , data={'message' : 'Customer does not exist'})
+    
+            
         
             

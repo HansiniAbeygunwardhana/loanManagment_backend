@@ -15,24 +15,24 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserForm
 
     # Fields to be displayed in the main view (write fields)
-    list_display = ('username', 'email', 'usertype', 'is_collector')
+    list_display = ('username', 'email', 'usertype', 'is_collector' , 'date_joined',)
 
     # Fields to be shown when adding/editing a user (write fields)
     fieldsets = (
         (None, {
-            'fields': ('username', 'password', 'email', 'usertype', 'is_collector')
+            'fields': ('username', 'password', 'email', 'usertype', 'is_collector' , 'date_joined',)
         }),
     )
 
     # Fields to be displayed in a submenu (readonly fields)
-    readonly_fields = ('id', 'date_joined', 'last_login')
+    readonly_fields = ('id',  'last_login')
 
     # Add the submenu and move the readonly fields into it
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj)
         readonly_fieldsets = (
             ('Login and OtherData', {
-                'fields': ('id', 'date_joined', 'last_login'),
+                'fields': ('id',  'last_login'),
                 'classes': ('collapse', 'collapse-closed'),
             }),
         )

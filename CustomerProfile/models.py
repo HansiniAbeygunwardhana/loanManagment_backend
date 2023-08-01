@@ -14,8 +14,6 @@ class CustomerProfile(models.Model):
     dateofbirth = models.DateTimeField(null=True)
     nicnumber = models.CharField(max_length=100, null=False)
     profileimage = CloudinaryField('images', null=True, blank=True)
-    nicimagefront = CloudinaryField('nic_images', null=True, blank=True)
-    nicimageback = CloudinaryField('nic_images', null=True, blank=True)
     
     def __str__(self):
         return self.name

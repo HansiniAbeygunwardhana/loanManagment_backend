@@ -10,7 +10,7 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomerProfile
-        fields = ['username', 'email', 'password', 'usertype', 'name', 'surname', 'address', 'telephone1', 'telephone2', 'dateofbirth', 'nicnumber', 'profileimage', 'nicimagefront', 'nicimageback']
+        fields = ['username', 'email', 'password', 'usertype', 'name', 'surname', 'address', 'telephone1', 'telephone2', 'dateofbirth', 'nicnumber', 'profileimage']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -33,7 +33,7 @@ class CustomerProfileOnlySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = CustomerProfile
-        fields = ['name' , 'surname' , 'address' , 'telephone1' , 'telephone2' , 'dateofbirth' , 'nicnumber' , 'profileimage' , 'nicimagefront' , 'nicimageback' , 'email'	]
+        fields = ['name' , 'surname' , 'address' , 'telephone1' , 'telephone2' , 'dateofbirth' , 'nicnumber' , 'profileimage' , 'email'	]
         
 class CustomerImageOnlySerializer(serializers.ModelSerializer):
     
@@ -47,3 +47,9 @@ class HomeScreenCustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = ['name' , 'surname' , 'profileimage' , 'address' ]
+        
+class BasicCustomerData(serializers.ModelSerializer):
+    
+    class Meta:
+        model = CustomerProfile
+        fields = ['name' , 'address' , 'telephone1' , 'nicnumber' ]
