@@ -23,7 +23,6 @@ class Loan(models.Model):
     first_guarantor = models.ForeignKey(CustomerProfile, on_delete=models.SET_NULL, related_name='first_guarantor', null=True)
     second_guarantor = models.ForeignKey(CustomerProfile, on_delete=models.SET_NULL, related_name='second_guarantor', null=True)
     loan_period = models.IntegerField(null=False)
-    pending = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
         

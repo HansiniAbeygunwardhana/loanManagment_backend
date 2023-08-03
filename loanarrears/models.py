@@ -87,7 +87,7 @@ class loanarrears(models.Model):
     
     @classmethod
     def filter_by_loanaddress(cls , location):
-        return cls.objects.filter(loan_id__username__address__icontains=location)
+        return cls.objects.filter(loan_id__username__address__icontains=location).values('loan_id').distinct()
     
     @classmethod
     def filter_by_location_and_price(cls , location , pricemax , pricemin):

@@ -15,12 +15,12 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserForm
 
     # Fields to be displayed in the main view (write fields)
-    list_display = ('username', 'email', 'usertype', 'is_collector' , 'date_joined',)
+    list_display = ('username', 'email', 'usertype', 'is_collector' , 'date_joined', 'is_active')
 
     # Fields to be shown when adding/editing a user (write fields)
     fieldsets = (
         (None, {
-            'fields': ('username', 'password', 'email', 'usertype', 'is_collector' , 'date_joined',)
+            'fields': ('username', 'password', 'email', 'usertype', 'is_collector' , 'date_joined', 'is_active')
         }),
     )
 

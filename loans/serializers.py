@@ -1,7 +1,17 @@
 from rest_framework import  serializers	
 from .models import Loan
 from CustomerProfile.models import CustomUser as User
-from CustomerProfile.serializers import CustomerNameIDSerializer , CustomerProfileOnlySerializer
+from CustomerProfile.serializers import CustomerNameIDSerializer , CustomerProfileOnlySerializer , CustomerProfileOnlySerializerWithId
+from CustomerProfile.models import CustomerProfile
+class CustomerProfileOnlySerializerForLoan(serializers.ModelSerializer):
+    
+   
+    email = serializers.EmailField(source='user.email')
+    
+    class Meta:
+        model = CustomerProfile
+        fields = ['name' , 'surname' , 'address' , 'telephone1' , 'telephone2' , 'dateofbirth' , 'nicnumber' ,  'email' , 'id'	, 'user']
+
 
 class loanSerializer(serializers.ModelSerializer):
         
@@ -46,17 +56,17 @@ class loanIDandNumberSerializer(serializers.ModelSerializer):
         
 class loanSerializerExtended(serializers.ModelSerializer):
         
-    username = CustomerProfileOnlySerializer()
-    first_guarantor = CustomerProfileOnlySerializer()
-    second_guarantor = CustomerProfileOnlySerializer()
+    username = CustomerProfileOnlySerializerForLoan()
+    first_guarantor = CustomerProfileOnlySerializerForLoan()
+    second_guarantor = CustomerProfileOnlySerializerForLoan()
     
     class Meta:
         model = Loan
         fields = '__all__'
         
-class loanSerializerCustomerId(serializers.ModelSerializer):
+class loanSerializerCustomerIds(serializers.ModelSerializer):
     
-    userId = serializers.IntegerField(source='username_id')
+    userId = serializers.IntegerField(source='username.id')
     
     class Meta:
         model = Loan
@@ -72,3 +82,5 @@ class loanSerializerCustomerId(serializers.ModelSerializer):
     class Meta:
         model = Loan
         fields = '__all__'
+        
+        

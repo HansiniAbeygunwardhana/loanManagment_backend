@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializers import AanalyticsSerializer
+from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from .models import analytics
@@ -51,10 +51,12 @@ class UpdateAnalytics(APIView):
             loanarrears_objects = loanarrears.objects.filter(arr_cal_date__contains=last_month_year).exclude(monthly_arrears=0)
             analytics_instance.total_loanArrears_accounts = loanarrears_objects.count()
 
+            print(last_month_year)
+            print(loanarrears_objects.count())
             user = CustomUser.objects.filter(date_joined__contains=last_month_year)
             monthly_customer = CustomerProfile.objects.filter(user_id__in=user)
             analytics_instance.lastmonth_customer_count = monthly_customer.count()
-
+            analytics_instance.total_loanArrears_accounts = loanarrears_objects.count()
             analytics_instance.date_requested = last_month_year
             analytics_instance.save()
 
@@ -66,4 +68,30 @@ class UpdateAnalytics(APIView):
         analytics_records = analytics.objects.all().first()
         serializer = AanalyticsSerializer(analytics_records)
         return Response(serializer.data)
+    
+class AnalyticsTotalCustomersView(APIView):
+    def get (self , request):
+        analytics_records = analytics.objects.all().order_by('calculated_date')
+        serializer = AnalyticsTotalCustomers(analytics_records , many=True)
+        return Response(serializer.data)
+    
+class AnalyticsTotalLoansView(APIView):
+    def get (self , request):
+        analytics_records = analytics.objects.all().order_by('calculated_date')
+        serializer = AnalyticsTotalLoans(analytics_records , many=True)
+        return Response(serializer.data)
+    
+class AnalyticsTotalPaymentsView(APIView):
+    def get (self , request):
+        analytics_records = analytics.objects.all().order_by('calculated_date')
+        serializer = AnalyticsTotalPayments(analytics_records , many=True)
+        return Response(serializer.data)
+    
+class AnalyticsTotalArrearsView(APIView):
+    def get (self , request):
+        analytics_records = analytics.objects.all().order_by('calculated_date')
+        serializer = AnalyticsTotalArrears(analytics_records , many=True)
+        return Response(serializer.data)
+    
+
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import CustomerProfileSerializer , CustomerNameIDSerializer , BasicCustomerData, CustomerProfileOnlySerializer , CustomerImageOnlySerializer , HomeScreenCustomerSerializer
+from .serializers import CustomerProfileSerializer , CustomerNameIDSerializer , CustomerProfileOnlySerializerWithId,BasicCustomerData, CustomerProfileOnlySerializer , CustomerImageOnlySerializer , HomeScreenCustomerSerializer
 from .models import CustomerProfile
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,7 +39,7 @@ class ListCustomerNames(APIView):
 class GetOneCustomer(APIView):
     def get(self, request, id):
         customer = get_object_or_404(CustomerProfile, id=id)
-        serializer = CustomerProfileOnlySerializer(customer)
+        serializer = CustomerProfileOnlySerializerWithId(customer)
         return Response(serializer.data)
     
 class UpdateCustomerImage(APIView):

@@ -7,10 +7,11 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
     password = serializers.CharField(source='user.password')
     usertype = serializers.CharField(source='user.usertype')
+    is_active = serializers.BooleanField(source='user.is_active')
 
     class Meta:
         model = CustomerProfile
-        fields = ['username', 'email', 'password', 'usertype', 'name', 'surname', 'address', 'telephone1', 'telephone2', 'dateofbirth', 'nicnumber', 'profileimage']
+        fields = ['username', 'email', 'password', 'usertype', 'name', 'surname', 'address', 'telephone1', 'telephone2', 'dateofbirth', 'nicnumber', 'profileimage' , 'is_active']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -34,6 +35,15 @@ class CustomerProfileOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerProfile
         fields = ['name' , 'surname' , 'address' , 'telephone1' , 'telephone2' , 'dateofbirth' , 'nicnumber' , 'profileimage' , 'email'	]
+        
+class CustomerProfileOnlySerializerWithId(serializers.ModelSerializer):
+    
+   
+    email = serializers.EmailField(source='user.email')
+    
+    class Meta:
+        model = CustomerProfile
+        fields = ['name' , 'surname' , 'address' , 'telephone1' , 'telephone2' , 'dateofbirth' , 'nicnumber' , 'profileimage' , 'email' , 'id'	]
         
 class CustomerImageOnlySerializer(serializers.ModelSerializer):
     

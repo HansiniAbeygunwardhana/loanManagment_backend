@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import make_password
 class CustomUser(AbstractUser):
     usertype = models.CharField(max_length=10 , default='user' , null=False)
     is_collector = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
     
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
